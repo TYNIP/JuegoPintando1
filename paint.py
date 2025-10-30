@@ -4,8 +4,8 @@ Exercises
 
 1. Add a color.
 2. Complete circle.
-3. Complete rectangle.
-4. Complete triangle.
+3. Complete rectangle. LISTO
+4. Complete triangle. LISTO
 5. Add width parameter.
 """
 
@@ -44,6 +44,7 @@ def circle(start, end):
 def rectangle(start, end):
     """Draw rectangle from start to end."""
     pass  # TODO
+    #LINEAS AGREGADAS RECTANGULO
     up()
     goto(start.x, start.y)
     down()
@@ -59,9 +60,46 @@ def rectangle(start, end):
 def triangle(start, end):
     """Draw triangle from start to end."""
     pass  # TODO
+    if 'points' not in state:
+        state['points'] = []
+
+    state['points'].append(vector(end.x, end.y))
+    #LINEAS AGREGADAS TRIANGULO
+    # Cuando ya hay 3 puntos, dibujar el triángulo
+    if len(state['points']) == 3:
+        up()
+        goto(state['points'][0].x, state['points'][0].y)
+        down()
+        begin_fill()
+        for p in state['points'][1:]:
+            goto(p.x, p.y)
+        goto(state['points'][0].x, state['points'][0].y)
+        end_fill()
+        state['points'] = []
 
 
 def tap(x, y):
+        # --- LÍNEAS AGREGADAS PARA TRIÁNGULO (3 clics) ---
+    shape = state['shape']
+    if shape is triangle:
+        if 'points' not in state:
+            state['points'] = []
+        state['points'].append(vector(x, y))
+
+        # Cuando ya hay 3 puntos, dibuja y limpia
+        if len(state['points']) == 3:
+            up()
+            goto(state['points'][0].x, state['points'][0].y)
+            down()
+            begin_fill()
+            for p in state['points'][1:]:
+                goto(p.x, p.y)
+            goto(state['points'][0].x, state['points'][0].y)
+            end_fill()
+            state['points'] = []
+        return
+    # --- FIN LÍNEAS AGREGADAS ---
+
     """Store starting point or draw shape."""
     start = state['start']
 
@@ -72,7 +110,7 @@ def tap(x, y):
         end = vector(x, y)
         shape(start, end)
         state['start'] = None
-
+ 
 
 def store(key, value):
     """Store value in state at key."""
@@ -95,3 +133,4 @@ onkey(lambda: store('shape', circle), 'c')
 onkey(lambda: store('shape', rectangle), 'r')
 onkey(lambda: store('shape', triangle), 't')
 done()
+
